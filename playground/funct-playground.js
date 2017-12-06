@@ -11,7 +11,9 @@ const {
   memoized,
   map,
   filter,
-  concatAll
+  concatAll,
+  reduce,
+  zip
 } = require('../lib');
 
 let arr = [1,2,3,4,5,6];
@@ -90,3 +92,20 @@ console.log(chainingResult);
 let arrOfArr = [[{a: 1}], [{b: 2}], [{c: 3}]];
 let concatAllResult = concatAll(arrOfArr);
 console.log(concatAllResult);
+
+// reduce
+let reduceArr = [2,8,2,7,3,4,1];
+let multiplicationResult = reduce(reduceArr, (acc, val) => acc * val);
+console.log(multiplicationResult);
+let additionResult = reduce(reduceArr, (acc, val) => acc + val);
+console.log(additionResult);
+
+// zip
+let leftArr = [{id: 1, a: 1}, {id: 2, a: 2}, {id: 3, a: 3}];
+let rightArr = [{id: 1, b: 1}, {id: 2, b: 2}, {id: 3, b: 3}];
+let zipResult = zip(leftArr, rightArr, (larr, rarr) => {
+  if(larr.id === rarr.id) {
+    return {id: larr.id, a: larr.a, b: rarr.b}
+  }
+});
+console.log(zipResult);
