@@ -13,7 +13,8 @@ const {
   filter,
   concatAll,
   reduce,
-  zip
+  zip,
+  curry
 } = require('../lib');
 
 let arr = [1,2,3,4,5,6];
@@ -109,3 +110,8 @@ let zipResult = zip(leftArr, rightArr, (larr, rarr) => {
   }
 });
 console.log(zipResult);
+
+// curry
+const multiply = (x,y,z) => x*y*z;
+let curryResult = curry(multiply)(7)(5)(9);
+console.log(curryResult);
