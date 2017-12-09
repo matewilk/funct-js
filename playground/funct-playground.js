@@ -14,7 +14,8 @@ const {
   concatAll,
   reduce,
   zip,
-  curry
+  curry,
+  partial
 } = require('../lib');
 
 let arr = [1,2,3,4,5,6];
@@ -115,3 +116,33 @@ console.log(zipResult);
 const multiply = (x,y,z) => x*y*z;
 let curryResult = curry(multiply)(7)(5)(9);
 console.log(curryResult);
+
+// curry - finding numbers in an array
+let match = curry((expr, str) => {
+  return str.match(expr);
+});
+let hasNumber = match(/[0-9]+/);
+let arrFilter = curry((fn, array) => {
+  return array.filter(fn);
+});
+
+let findNumbersInArray = arrFilter(hasNumber);
+let fNinArrResult = findNumbersInArray(['test', '1', 'test2', 'nonumber', '4']);
+console.log(fNinArrResult);
+
+// curry - square an array
+let mapArr = curry((fn, array) => {
+  return array.map(fn);
+});
+let squareAll = mapArr((x) => x * x);
+let sqrAllResult = squareAll([1,2,3,4,5]);
+console.log(sqrAllResult);
+
+// curry - find even of an array
+let findEven = arrFilter((x) => !(x % 2));
+let findEvenResult = findEven([1,3,5,10,23,11,66,44,32,874]);
+console.log(findEvenResult);
+
+// partial
+let delayTenMs = partial(setTimeout, undefined, 10);
+delayTenMs(() => console.log("Do Y task"));
