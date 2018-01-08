@@ -256,3 +256,69 @@ console.log(georgeMayBe);
 let joinExample = MayBe.of(MayBe.of(5));
 console.log(joinExample);
 console.log(joinExample.join());
+
+// GENERATORS
+function* gen() {
+  return 'first generator';
+}
+let g = gen();
+console.log(g);
+let result = g.next();
+console.log(result);
+console.log(result.value);
+// the below gives undefined as generator is done
+console.log(g.next().value);
+// instances of same generator can be in different states
+let g2 = gen();
+console.log(g2.next().value);
+
+// generator sequence
+function* genSequence () {
+  yield 'first';
+  yield 'second';
+  yield 'third';
+}
+
+let gseq = genSequence();
+console.log(gseq.next().value);
+console.log(gseq.next().value);
+
+// using done value of generator to iterate until fully consumed
+let gseq2 = genSequence();
+for(let value of gseq2) {
+  console.log(value)
+}
+
+// passing data to generators
+function* sayFullName () {
+  let firstName = yield;
+  let lastName = yield;
+
+  console.log(firstName, lastName);
+}
+
+let g3 = sayFullName();
+g3.next();
+console.log(g3.next('Mateusz'));
+console.log(g3.next('Wilk'));
+
+// using generators instead of promises (async calls!)
+let getDataOne = () => {
+  setTimeout(() => generator.next('data one'), 5000);
+};
+let getDataTwo = () => {
+  console.log('getting data two');
+  setTimeout(() => generator.next('data two'), 1000);
+};
+
+function* main () {
+  let dataOne = yield getDataOne();
+  let dataTwo = yield getDataTwo();
+
+  console.log(`data one: ${dataOne}`);
+  console.log(`data two: ${dataTwo}`);
+}
+
+// this will trigger async calls from the generator main
+let generator = main();
+generator.next();
