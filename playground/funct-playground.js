@@ -15,7 +15,9 @@ const {
   reduce,
   zip,
   curry,
-  partial
+  partial,
+  compose,
+  nCompose
 } = require('../lib');
 
 let arr = [1,2,3,4,5,6];
@@ -144,5 +146,51 @@ let findEvenResult = findEven([1,3,5,10,23,11,66,44,32,874]);
 console.log(findEvenResult);
 
 // partial
-let delayTenMs = partial(setTimeout, undefined, 10);
+let delayTenMs = partial(setTimeout, undefined, 1);
 delayTenMs(() => console.log("Do Y task"));
+
+// compose
+let number = compose(Math.round, parseFloat); // = (c) => Math.round(parseFloat(c))
+let roundedNo = number("4.24");
+console.log(roundedNo);
+
+// compose example #2
+let splitIntoSpaces = (str) => str.split(" ");
+let count = (array) => array.length;
+let countWords = compose(count, splitIntoSpaces);
+let countWordsResult = countWords('try counting words of this sentence');
+console.log(countWordsResult);
+
+// ---- compose with map & filter ----
+let booksData = require('./data.json');
+
+let filterGoodBooks = (book) => book.rating[0] > 4.5;
+let filterBadBooks = (book) => book.rating[0] < 3.5;
+
+let projectAuthor = (book) => ({author: book.author});
+let projectTitle = (book) => ({title: book.title});
+
+
+// using partial
+let partialFilter = partial(filter, undefined, filterGoodBooks);
+let partialMap = partial(map, undefined, projectAuthor);
+
+let composePartialResult = compose(partialMap, partialFilter)(booksData);
+console.log(composePartialResult);
+
+// using curry
+let reversedMap = (callback, array) => map(array, callback);
+let reverseFilter = (callback, array) => filter(array, callback);
+
+let curriedMap = curry(reversedMap)(projectTitle);
+let curriedFilter = curry(reverseFilter)(filterBadBooks);
+
+let composeCurryResult = compose(curriedMap, curriedFilter)(booksData);
+console.log(composeCurryResult);
+// ---- end compose ----
+
+// nCompose
+let oddOrEvenWords = (ip) => ip % 2 === 0 ? 'even' : 'odd';
+let oddOrEven = nCompose(oddOrEvenWords, count, splitIntoSpaces);
+let nComposeResult = oddOrEven('am I odd or even word count sentence');
+console.log(nComposeResult);
