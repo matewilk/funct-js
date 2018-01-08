@@ -194,3 +194,65 @@ let oddOrEvenWords = (ip) => ip % 2 === 0 ? 'even' : 'odd';
 let oddOrEven = nCompose(oddOrEvenWords, count, splitIntoSpaces);
 let nComposeResult = oddOrEven('am I odd or even word count sentence');
 console.log(nComposeResult);
+
+// Functor
+let Container = function ( val ) {
+  this.value = val;
+};
+
+Container.of = function(val) {
+  return new Container(val)
+};
+
+Container.prototype.map = function(fn){
+  return Container.of(fn(this.value));
+};
+
+// functor example
+let double = x => x * 2;
+let testDouble = Container.of(3).map(double);
+console.log(testDouble);
+
+// MayBe functor
+let MayBe = function ( val ) {
+  this.value = val;
+};
+
+MayBe.of = function(val) {
+  return new MayBe(val);
+};
+
+MayBe.prototype.isNothing = function () {
+  return (this.value === null || this.value === undefined);
+};
+
+MayBe.prototype.map = function (fn) {
+  return this.isNothing() ? MayBe.of(null) : MayBe.of(fn(this.value));
+};
+
+MayBe.prototype.join = function() {
+  return this.isNothing() ? MayBe.of(null) : this.value;
+};
+
+// A functor with chain method is a Monad! (don't forget about join method)
+MayBe.prototype.chain = function(fn) {
+  return this.map(fn).join();
+};
+
+// MayBe functor example
+let upper = MayBe.of('string').map(x => x.toUpperCase())
+console.log(upper);
+
+let nullMayBe = MayBe.of(null).map(x => x.toUpperCase());
+console.log(nullMayBe);
+
+let georgeMayBe = MayBe.of('george')
+  .map(x => x.toUpperCase())
+  .map(x => `Mr. ${x}`);
+console.log(georgeMayBe);
+
+
+// MayBe join example
+let joinExample = MayBe.of(MayBe.of(5));
+console.log(joinExample);
+console.log(joinExample.join());
